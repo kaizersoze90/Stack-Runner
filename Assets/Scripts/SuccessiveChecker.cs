@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SuccessiveChecker : MonoBehaviour
 {
+    [SerializeField] AudioClip splitSFX;
     [SerializeField] float pitchIncreaseValue;
     [SerializeField] float maxPitchValue;
 
@@ -29,8 +30,11 @@ public class SuccessiveChecker : MonoBehaviour
     public void PlayNormalSound()
     {
         _audioSource.pitch = 1f;
-        _audioSource.Play();
+        _audioSource.PlayOneShot(splitSFX);
     }
 
-
+    public void ResetPitch()
+    {
+        _audioSource.pitch = 1f;
+    }
 }

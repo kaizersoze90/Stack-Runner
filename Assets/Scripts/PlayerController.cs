@@ -5,20 +5,28 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float moveSpeed;
-    [SerializeField] CinemachineVirtualCamera followCam;
+    [Header("Components")]
+    [SerializeField] CinemachineManager cinemachine;
+    [SerializeField] StackSpawner spawner;
 
-    Rigidbody _myRigidbody;
+    [Header("General Settings")]
+    [SerializeField] AudioClip victorySFX;
+    [SerializeField] float moveSpeed, moveSpeedIncrement;
+
     GameManager _gameManager;
+    Animator _myAnimator;
+
+    bool _isVictory;
 
     void Start()
     {
-        _myRigidbody = GetComponent<Rigidbody>();
         _gameManager = FindObjectOfType<GameManager>();
+        _myAnimator = GetComponent<Animator>();
     }
 
     void Update()
     {
+        if (_isVictory) { return; }
         transform.position += transform.forward * moveSpeed * Time.deltaTime;
     }
 
@@ -26,11 +34,33 @@ public class PlayerController : MonoBehaviour
     {
         if (other.CompareTag("Killer"))
         {
-            _gameManager.gameActive = false;
             _gameManager.ProcessGameOver();
-
-            followCam.Follow = null;
-            followCam.LookAt = null;
+            cinemachine.ReleaseFollowCam();
         }
+        else if (other.CompareTag("FinishLine"))
+        {
+            ProcessVictory();
+            Destroy(other.gameObject);
+        }
+        else if (other.CompareTag("ContinueLine"))
+        {
+            spawner.SpawnStack();
+        }
+    }
+
+    public void GetReadyForNextlevel()
+    {
+        moveSpeed += moveSpeedIncrement;
+        _isVictory = false;
+        _myAnimator.SetBool("isDancing", false);
+        cinemachine.SwitchCamera();
+    }
+
+    void ProcessVictory()
+    {
+        _isVictory = true;
+        AudioSource.PlayClipAtPoint(victorySFX, transform.position, 1f);
+        _myAnimator.SetBool("isDancing", true);
+        cinemachine.SwitchCamera();
     }
 }
