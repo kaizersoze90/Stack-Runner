@@ -15,6 +15,7 @@ public class StackSpawner : MonoBehaviour
     [SerializeField] float perfectTapTolerance;
 
     GameManager _gameManager;
+    GameObject _startStack;
     Vector3 _finishPos;
 
     int _spawnIndex;
@@ -25,12 +26,11 @@ public class StackSpawner : MonoBehaviour
 
         //Generate level by editor input and place finish stack
         PlaceFinishStack();
-        SpawnStack();
     }
 
     public void SpawnStack()
     {
-        if (!_gameManager.gameActive) { return; }
+        if (!_gameManager.GameActive) { return; }
 
         //Check if stack spawner passed finish line
         if (transform.position.z > _finishPos.z - (finishStack.transform.localScale.z / 2))
@@ -59,6 +59,7 @@ public class StackSpawner : MonoBehaviour
     public void GetReadyForNextLevel()
     {
         MovingStack.LastStack = finishStack.GetComponent<MovingStack>();
+        MovingStack.StartStack = _startStack.GetComponent<MovingStack>();
 
         //Increase difficulty
         levelLenght += levelIncrement;
@@ -83,6 +84,16 @@ public class StackSpawner : MonoBehaviour
         return perfectTapTolerance;
     }
 
+    public Vector3 SetAndGetPosition()
+    {
+        transform.position = new Vector3(transform.position.x, transform.position.y,
+                                       MovingStack.StartStack.transform.position.z
+                                       + (MovingStack.StartStack.transform.localScale.z / 2)
+                                       + (stack.transform.localScale.z / 2));
+
+        return MovingStack.StartStack.transform.position;
+    }
+
     void PlaceFinishStack()
     {
         //Calculate finish stack position according to generated level
@@ -91,7 +102,6 @@ public class StackSpawner : MonoBehaviour
                                 (finishStack.transform.localScale.z / 2) -
                                 (stack.transform.localScale.z / 2));
 
-        Instantiate(finishStack, _finishPos, Quaternion.identity);
+        _startStack = Instantiate(finishStack, _finishPos, Quaternion.identity);
     }
-
 }

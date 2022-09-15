@@ -8,6 +8,7 @@ public class MovingStack : MonoBehaviour
 {
     public static MovingStack CurrentStack { get; private set; }
     public static MovingStack LastStack { get; set; }
+    public static MovingStack StartStack { get; set; }
 
     Renderer _myRenderer;
     GameManager _gameManager;
@@ -25,6 +26,11 @@ public class MovingStack : MonoBehaviour
         if (LastStack == null)
         {
             LastStack = this;
+        }
+
+        if (StartStack == null)
+        {
+            StartStack = this;
         }
     }
 
@@ -96,7 +102,7 @@ public class MovingStack : MonoBehaviour
 
     void GameOver()
     {
-        _gameManager.ProcessGameOver();
+        _gameManager.ProcessFail();
 
         LastStack = null;
         CurrentStack = null;

@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.CompareTag("Killer"))
         {
-            _gameManager.ProcessGameOver();
+            _gameManager.ProcessFail();
             cinemachine.ReleaseFollowCam();
         }
         else if (other.CompareTag("FinishLine"))
@@ -54,6 +54,20 @@ public class PlayerController : MonoBehaviour
         _isVictory = false;
         _myAnimator.SetBool("isDancing", false);
         cinemachine.SwitchCamera();
+    }
+
+    public void PrepareToContinue()
+    {
+        transform.position = spawner.SetAndGetPosition();
+
+        cinemachine.SetFollowCam(transform);
+
+        GameObject[] stacks = GameObject.FindGameObjectsWithTag("MovingStack");
+
+        foreach (GameObject stack in stacks)
+        {
+            Destroy(stack.gameObject);
+        }
     }
 
     void ProcessVictory()

@@ -8,7 +8,10 @@ public class UIManager : MonoBehaviour
 {
     [Header("UI Elements & Settings")]
     [SerializeField] Animator perfectTapText;
-    [SerializeField] Button continueButton, startButton;
+    [SerializeField] Button continueButton;
+    [SerializeField] Button startButton;
+    [SerializeField] Button rewardButton;
+    [SerializeField] Button restartButton;
     [SerializeField] TextMeshProUGUI headerText, scoreText;
 
     public void PlayPerfectText()
@@ -24,6 +27,15 @@ public class UIManager : MonoBehaviour
     public void SetStartButton(bool state)
     {
         startButton.gameObject.SetActive(state);
+    }
+
+    public void SetRewardButton(bool state)
+    {
+        rewardButton.gameObject.SetActive(state);
+    }
+    public void SetRestartButton(bool state)
+    {
+        restartButton.gameObject.SetActive(state);
     }
 
     public void SetHeaderText(bool state)

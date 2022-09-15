@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] AudioClip failSFX;
     [SerializeField] float reloadDelay, continueDelay;
 
-    public bool gameActive;
+    public bool GameActive;
 
     void Awake()
     {
@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (!gameActive) { return; }
+        if (!GameActive) { return; }
 
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
 
-        gameActive = true;
+        GameActive = true;
 
         spawner.gameObject.SetActive(true);
         uiManager.SetScoreText(true);
@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
 
     public void ContinueGame()
     {
-        gameActive = true;
+        GameActive = true;
 
         spawner.GetReadyForNextLevel();
         player.GetReadyForNextlevel();
@@ -59,32 +59,48 @@ public class GameManager : MonoBehaviour
         uiManager.SetContinueButton(false);
     }
 
+    public void ReturnToMainMenu()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void ProcessReward()
+    {
+        GameActive = true;
+
+        player.PrepareToContinue();
+
+        uiManager.SetRewardButton(false);
+        uiManager.SetRestartButton(false);
+    }
+
     public void ProcessVictory()
     {
         StartCoroutine(nameof(Victory));
     }
 
-    public void ProcessGameOver()
+    public void ProcessFail()
     {
-        if (!gameActive) { return; }
+        if (!GameActive) { return; }
 
-        gameActive = false;
-
-        StartCoroutine(nameof(GameOver));
+        StartCoroutine(nameof(Fail));
     }
 
-    IEnumerator GameOver()
+    IEnumerator Fail()
     {
+        GameActive = false;
+
         AudioSource.PlayClipAtPoint(failSFX, Camera.main.transform.position, 0.4f);
 
         yield return new WaitForSeconds(reloadDelay);
 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        uiManager.SetRewardButton(true);
+        uiManager.SetRestartButton(true);
     }
 
     IEnumerator Victory()
     {
-        gameActive = false;
+        GameActive = false;
 
         yield return new WaitForSeconds(continueDelay);
 

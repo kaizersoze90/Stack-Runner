@@ -23,6 +23,11 @@ public class CinemachineManager : MonoBehaviour
         followCam.Follow = null;
     }
 
+    public void SetFollowCam(Transform player)
+    {
+        followCam.Follow = player;
+    }
+
     public void SwitchCamera()
     {
         followCam.Priority = followCam.Priority == 1 ? 0 : 1;
